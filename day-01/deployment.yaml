@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: myfastapi-dev
+  labels:
+    name: myfastapi-dev
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myfastapi-deployment
+  namespace: myfastapi-dev
+  labels:
+    app: myfastapi-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myfastapi-app
+  template:
+    metadata:
+      labels:
+        app: myfastapi-app
+    spec:
+      containers:
+      - name: myapi
+        image: docker.io/library/myfastapi:1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: myfastapi-port
+          containerPort: 80
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myfastapi-svc
+  namespace: myfastapi-dev
+spec:
+  type: NodePort
+  selector:
+    app: myfastapi-app
+  ports:
+    - port: 8080
+      targetPort: myfastapi-port
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: myfastapi-ingress
+  namespace: myfastapi-dev
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: myfastapi.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: myfastapi-svc
+            port:
+              number: 8080
+
