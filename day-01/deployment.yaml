@@ -1,3 +1,4 @@
+# Namespace
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -5,6 +6,7 @@ metadata:
   labels:
     name: myfastapi-dev
 ---
+# Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,22 +24,43 @@ spec:
       labels:
         app: myfastapi-app
     spec:
+      # Pod    
       containers:
       - name: myapi
         image: docker.io/library/myfastapi:1.0
         imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: myfastapi-port
+          failureThreshold: 3
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /liveness
+            port: myfastapi-port
+          initialDelaySeconds: 5
+          periodSeconds: 10       
         ports:
         - name: myfastapi-port
           containerPort: 80
           protocol: TCP
 ---
+# Service
 apiVersion: v1
 kind: Service
 metadata:
   name: myfastapi-svc
   namespace: myfastapi-dev
 spec:
-  type: NodePort
+  # Using ClusterIP instead of NodePort
   selector:
     app: myfastapi-app
   ports:
@@ -45,6 +68,7 @@ spec:
       targetPort: myfastapi-port
       protocol: TCP
 ---
+# Ingress
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -54,10 +78,10 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: myfastapi.com
+  - host: my-minikube.com
     http:
       paths:
-      - path: /
+      - path: /fastapi/
         pathType: Prefix
         backend:
           service:

@@ -1,11 +1,30 @@
-# Kubernetes day-01
+# Kubernetes Day 01
 
 ## Start Minikube
 
-Note down the external IP
+Start Minikube, enable addons and note down the external IP
 
 ```bash
-minikube start --memory 4096 --cpus 2
+# configure driver and resource
+minikube delete
+minikube config set driver hyperv
+minikube config set cpus 2
+minikube config set memory 8gb
+
+# start minikube
+minikube start
+
+# enable useful addons
+minikube addons enable metrics-server
+minikube addons enable dashboard
+minikube addons enable registry
+
+# enable and configure ingress addons
+minikube addons enable ingress
+minikube addons enable ingress-dns
+kubectl edit configmap coredns -n kube-system
+
+# note down cluster ip
 minikube ip
 ```
 
@@ -19,6 +38,9 @@ minikube image build -t myfastapi:1.0 .
 
 ```bash
 kubectl apply -f .\deployment.yaml
+
+kubectl config set-context --current --namespace=myfastapi-dev
+
 kubectl get all -n myfastapi-dev
 kubectl get ingress -n myfastapi-dev
 ```
@@ -26,6 +48,8 @@ kubectl get ingress -n myfastapi-dev
 ## Test app
 
 ```bash
-curl -H "Host: myfastapi.com" http://<minikube ip>:80/
+curl -H "Host: my-minikube.com" http://<minikube ip>:80/fastapi/
+
+kubectl logs pod/<podname> -n myfastapi-dev
 ```
 

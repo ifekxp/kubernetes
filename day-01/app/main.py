@@ -14,3 +14,11 @@ async def root():
     message = "time: " + current_time + ", host: " + hostname
 
     return {"response": message}
+
+@app.get("/liveness")
+def health():
+    return "Ok"  
+
+@app.get("/readiness")
+def health():
+    return "Ok"  
