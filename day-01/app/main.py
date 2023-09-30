@@ -23,6 +23,6 @@ def liveness():
 def readiness():
     return "Ok"  
 
-@app.get("/healthz")
-def liveness():
+@app.get("/health")
+def health():
     return "Ok"  
