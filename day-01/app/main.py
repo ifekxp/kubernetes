@@ -16,9 +16,13 @@ async def root():
     return {"response": message}
 
 @app.get("/liveness")
-def health():
+def liveness():
     return "Ok"  
 
 @app.get("/readiness")
-def health():
+def readiness():
+    return "Ok"  
+
+@app.get("/healthz")
+def liveness():
     return "Ok"  
