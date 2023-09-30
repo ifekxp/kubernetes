@@ -22,7 +22,6 @@ minikube addons enable registry
 # enable and configure ingress addons
 minikube addons enable ingress
 minikube addons enable ingress-dns
-kubectl edit configmap coredns -n kube-system
 
 # note down cluster ip
 minikube ip
