@@ -24,18 +24,31 @@ spec:
       labels:
         app: myfastapi-app
     spec:
-      # Pod    
+      # Pod
+      # Pod security context
+      # Ref: https://cheatsheetseries.owasp.org/cheatsheets/Kubernetes_Security_Cheat_Sheet.html
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000     
+      # Volume  
+      volumes:
+      - name: data-volume
+        emptyDir:       
+          sizeLimit: 100Mi
       containers:
       - name: myapi
         image: docker.io/library/myfastapi:1.0
         imagePullPolicy: IfNotPresent
+        # Pod resource
         resources:
           requests:
             memory: "64Mi"
             cpu: "250m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "512Mi"
+            cpu: "1000m"
+        # Pod health check    
         livenessProbe:
           httpGet:
             path: /liveness
@@ -48,6 +61,15 @@ spec:
             port: myfastapi-port
           initialDelaySeconds: 5
           periodSeconds: 10       
+        # Pod security optoins
+        securityContext:  
+          readOnlyRootFilesystem: true  
+          runAsNonRoot: true
+        # Data volume
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data/          
+        # Pod port  
         ports:
         - name: myfastapi-port
           containerPort: 80
