@@ -36,6 +36,9 @@ spec:
       - name: data-volume
         emptyDir:       
           sizeLimit: 100Mi
+      - name: secret-alphavantage
+        secret:
+          secretName: alphavantage
       containers:
       - name: myapi
         image: docker.io/library/myfastapi:1.0
@@ -69,6 +72,9 @@ spec:
         volumeMounts:
         - name: data-volume
           mountPath: /data/          
+        - name: secret-alphavantage
+          mountPath: /etc/secret
+          readOnly: true 
         # Pod port  
         ports:
         - name: myfastapi-port
@@ -100,10 +106,10 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: my-minikube.com
+  - host: myfastapi.com
     http:
       paths:
-      - path: /fastapi/
+      - path: /
         pathType: Prefix
         backend:
           service:
