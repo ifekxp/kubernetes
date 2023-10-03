@@ -23,7 +23,7 @@ $ minikube config set cpus 2
 $ minikube config set memory 8gb
 
 # start minikube
-$ minikube start -n 1
+$ minikube start -n 1 [ --static-ip <ip> ]
 
 # enable useful addons
 $ minikube addons enable metrics-server
@@ -41,6 +41,8 @@ $ $MINIKUBE_IP=minikube ip
 ## Build image
 
 ```powershell
+$ cd day-01
+
 $ minikube image build -t myfastapi:1.0 .
 ```
 exit
@@ -49,11 +51,11 @@ exit
 ```powershell
 $ echo "<Alphavantage API KEY>" > .secret/alphavantage.secret
 
-$ kubectl create ns myfastapi-dev
+$ kubectl apply -f .\namespace.yaml
 
 $ kubectl config set-context --current --namespace=myfastapi-dev
 
-$ kubectl create secret generic alphavantage --from-file=.secret/alphavantage.secret
+$ kubectl create secret generic alphavantage --from-file=../.secret/alphavantage.secret
 
 $ kubectl apply -f .\deployment.yaml
 
@@ -70,6 +72,7 @@ $ curl -H "Host: myfastapi.com" http:///"$MINIKUBE_IP":80/stock/quote/ibm
 
 $ curl -H "Host: myfastapi.com" http:///"$MINIKUBE_IP":80/stock/quote/shop.trt
 
-$ kubectl logs pod/<podname> -n myfastapi-dev
+$ $POD_NAME=kubectl get pod -o name
+$ kubectl logs "$POD_NAME" --since=1m -f -n myfastapi-dev
 ```
 
