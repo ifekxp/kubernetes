@@ -123,7 +123,7 @@ $ kubectl logs "$POD_NAME" --since=1m -f -n myfastapi-dev
 # Press 0 to see all resources. Press :q to quit.
 $ k9s -n myfastapi-dev
 ```
-## Reference: 
+## Reference
 [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 
 [K9s](https://k9scli.io/topics/commands/)
