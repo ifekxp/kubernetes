@@ -125,7 +125,10 @@ $ k9s -n myfastapi-dev
 ```
 ## Reference: 
 [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+
 [K9s](https://k9scli.io/topics/commands/)
+
 [Jq](https://jqlang.github.io/jq/manual/)
+
 [Chocolatey](https://docs.chocolatey.org/en-us/getting-started)
 
